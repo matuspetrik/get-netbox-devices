@@ -1,10 +1,10 @@
 netbox:
-  ipv4: ${NETBOX_IPV4}
-  host: ${NETBOX_FQDN}
+  ipv4: ${NETBOX_IPV4}  # env variable, do not edit
+  host: ${NETBOX_FQDN}  # env variable, do not edit
   port: 443
   use_ssl: True
-  token_ro: ${NETBOX_TOKEN_RO}
-  token_rw: ${NETBOX_TOKEN_RW}
+  token_ro: ${NETBOX_TOKEN_RO}  # env variable, do not edit
+  token_rw: ${NETBOX_TOKEN_RW}  # env variable, do not edit
 
 criteria_input:
   input:
@@ -35,6 +35,6 @@ criteria_input:
     tenant__n: # Has to match tenant in Netbox. Note, these tags will be excluded.
       - swan
 
-output_file_path: ${OUTPUT_FILE_PATH}
+output_file_path: ${OUTPUT_FILE_PATH}  # env variable, do not edit
 
 counter: 4
