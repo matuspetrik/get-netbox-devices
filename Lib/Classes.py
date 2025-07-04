@@ -212,7 +212,7 @@ class Netbox:
                 log.info(f"Netbox not reachable at { self.args.netbox.host }. "
                          f"Falling back to IP address using system env var NETBOX_FQDN")
                 log.info(f"Connection attempts to Netbox: { self.args.counter } left.")
-                self.args.counter -= 1
+                self.args.counter -= zwsz
                 self.url = f"https://{self.args.netbox.ipv4}/api"
                 self.orchestrate_output_file_creation()
             except Exception as e:
