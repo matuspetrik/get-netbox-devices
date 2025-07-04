@@ -1,0 +1,19 @@
+all:
+  children:
+{%- for platform in platforms %}
+{%-   if 'ios' in platform %}
+    cisco_{{ platform.replace('-', '_') }}_access:
+{%-   else %}
+    {{ platform.replace('-', '_') }}_access:
+{%-   endif %}
+      hosts:
+{%-   for result in results %}
+{%-     if result.platform.slug == platform %}
+{#-       Exclude FPR and secondary ASA #}
+{%-       if '-fpr-' not in result.name and '-sec' not in result.name %}
+        {{ result.name }}:
+          ansible_host: {{ result.primary_ip.address.split('/')[0] }}
+{%-       endif %}
+{%-     endif %}
+{%-   endfor %}
+{%- endfor %}

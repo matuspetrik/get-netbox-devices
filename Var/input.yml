@@ -1,0 +1,40 @@
+netbox:
+  ipv4: ${NETBOX_IPV4}
+  host: ${NETBOX_FQDN}
+  port: 443
+  use_ssl: True
+  token_ro: ${NETBOX_TOKEN_RO}
+  token_rw: ${NETBOX_TOKEN_RW}
+
+criteria_input:
+  input:
+    platform: # Has to match platforms in Netbox
+      - fortigate
+      - mikrotik
+      - ios
+      - ios-xe
+      - ios-firmware
+      - asa
+    status: # Has to match statuses in Netbox
+      - active
+      # - decommissioning
+      # - inventory
+      # - failed
+      # - planned
+      # - staged
+      # - offline
+    region: # Has to match regions in Netbox
+      - slovakia
+      # - hungary
+      # - austria
+    has_primary_ip:
+      - true
+    tag__n: # Has to match tags in Netbox. Note, these tags will be excluded.
+      - schenck
+      - technology
+    tenant__n: # Has to match tenant in Netbox. Note, these tags will be excluded.
+      - swan
+
+output_file_path: ${OUTPUT_FILE_PATH}
+
+counter: 4
