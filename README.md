@@ -1,5 +1,5 @@
 # Get Netbox Devices
-An application to pull data from Netbox based o provided criteria
+An application to pull data from Netbox based o provided criteria.
 
 Only `Var/input.yml` need to be edited to reflect the real status.
 
