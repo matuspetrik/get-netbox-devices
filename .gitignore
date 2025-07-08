@@ -1,0 +1,4 @@
+venv/
+Cert/
+app.log
+**/__pycache__
