@@ -16,22 +16,22 @@ all:
     mikrotik_access:
       hosts:
         MIKROTIK-BRIDGE-01:
-          ansible_host: 10.52.17.50
+          ansible_host: 10.134.17.50
     ...         
 ```
 
 ## Usage (Option #1)
 ```
-git clone git@127.0.0.1:itdanucem/get-netbox-devices.git
+git clone git@127.0.0.1:itdept/get-netbox-devices.git
 cd get-netbox-devices
 python -m venv venv
 . venv/bin/activate
 pip install -r requirementes.txt
-export NETBOX_IPV4=10.52.1.49
+export NETBOX_IPV4=10.134.1.49
 export NETBOX_FQDN=svk-rnk-netbox.hdb.int
 export NETBOX_TOKEN_RO=6f65de4dba8b5e13de52b91c119b2086a016bbd1
 export NETBOX_TOKEN_RW=NONE
-export OUTPUT_FILE_PATH=/home/itdanucem/ansible/inventory/hostfile.yml
+export OUTPUT_FILE_PATH=/home/itdept/ansible/inventory/hostfile.yml
 python main.py
 ```
 
@@ -44,17 +44,17 @@ Description=Ansible script to pull config from network devices and store on Gite
 
 [Service]
 Type=simple
-WorkingDirectory=/home/itdanucem/get-netbox-devices
-User=itdanucem
-Group=itdanucem
+WorkingDirectory=/home/itdept/get-netbox-devices
+User=itdept
+Group=itdept
 Environment=PATH=venv:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-Environment="VIRTUAL_ENV=/home/itdanucem/get-netbox-devices/venv"
+Environment="VIRTUAL_ENV=/home/itdept/get-netbox-devices/venv"
 Environment=NETBOX_FQDN=svk-rnk-netbox.hdb.int
-Environment=NETBOX_IPV4=10.52.1.49
+Environment=NETBOX_IPV4=10.134.1.49
 Environment=NETBOX_TOKEN_RO=6f65de4dba8b5e13de52b91c119b2086a016bbd1
 Environment=NETBOX_TOKEN_RW=TBD
-Environment=OUTPUT_FILE_PATH=/home/itdanucem/ansible/inventory/hostfile.yml
-ExecStart=/bin/bash -c 'source $VIRTUAL_ENV/bin/activate && python /home/itdanucem/get-netbox-devices/main.py'
+Environment=OUTPUT_FILE_PATH=/home/itdept/ansible/inventory/hostfile.yml
+ExecStart=/bin/bash -c 'source $VIRTUAL_ENV/bin/activate && python /home/itdept/get-netbox-devices/main.py'
 Restart=on-failure
 RestartSec=10
 
