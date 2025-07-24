@@ -141,7 +141,8 @@ class Netbox:
                 'has_primary_ip': [True],
                 'platform': ['fortigate', 'mikrotik', 'ios', 'ios-xe', 'ios-firmware', 'asa'],
                 'region': ['slovakia'],
-                'status': ['active']
+                'status': ['active'], 
+                'individual_hosts': ['nd-idc-fw01']
             }
         '''
         criteria_dict = {}
@@ -152,7 +153,7 @@ class Netbox:
         # log.info(criteria_dict)
         return criteria_dict
 
-    def catenate_url_suffix(self, criteria_dict):
+    def catenate_url_suffix(self, criteria_dict, individ_hosts=False):
         ''' Catenate final URL string to be attached to Netbox API url.
             Input: criteria dict
             Output: url_suffix with filtered criteria
@@ -163,9 +164,12 @@ class Netbox:
         url_list = []
         for crit_keys, crit_vals in criteria_dict.items():
             for value in crit_vals:
-                url_list.append(f"{crit_keys}={value}")
+                if crit_keys != 'individual_hosts' and not individ_hosts:
+                    url_list.append(f"{crit_keys}={value}")
+                if crit_keys == 'individual_hosts' and individ_hosts:
+                    url_list.append(f"q={value}")
         url_suffix = "&".join(url_list)
-        # log.info(f"{url_suffix}")
+        log.info(f"SUFFIX:{url_suffix}")
         return url_suffix
 
     def catenate_final_url(self, *args):
@@ -193,26 +197,33 @@ class Netbox:
             - Pull the data from Netbox
             - Process the data through Jinja2 template
             - Generate final file, if Netbox is ok, use previous file instead
+            - A special case `individual_hosts` breaks all previous filters
+              and adds these hosts to the list
         '''
         # - Read the criteria dictionary form Var/input.yml
         criteria_dict = self.get_criteria()
-
-        # - Generate the filtering api url string
-        url_suffix = self.catenate_url_suffix(criteria_dict)
         dcim_devices_url = f"{self.url}/dcim/devices"
+        url_suffix = self.catenate_url_suffix(criteria_dict)
         final_url = self.catenate_final_url(dcim_devices_url, url_suffix)
+        # Vars/input.yml: criteria/input/individual_hosts are added also, 
+        # ignoring all previous criteria
+        url_suffix_individ_hosts = self.catenate_url_suffix(criteria_dict, True)
+        final_url_individ_hosts = self.catenate_final_url(dcim_devices_url, url_suffix_individ_hosts)
 
         # - Pull the data from Netbox
         while self.args.counter > 0:
             try:
                 response = self.session.get(final_url, headers=self.headers, verify=False)
+                response_individ = self.session.get(final_url_individ_hosts, headers=self.headers, verify=False)
                 log.info(f"Netbox session response: { response.status_code }")
+                log.info(f"Netbox session response (individual hosts): { response_individ.status_code }")
                 response_munch = fns.munchify(**response.json())
+                response_individ_munch = fns.munchify(**response_individ.json())
             except ConnectionError:
                 log.info(f"Netbox not reachable at { self.args.netbox.host }. "
                          f"Falling back to IP address using system env var NETBOX_FQDN")
                 log.info(f"Connection attempts to Netbox: { self.args.counter } left.")
-                self.args.counter -= zwsz
+                self.args.counter -= 1
                 self.url = f"https://{self.args.netbox.ipv4}/api"
                 self.orchestrate_output_file_creation()
             except Exception as e:
@@ -227,6 +238,13 @@ class Netbox:
                 env = Environment(loader=FileSystemLoader('Template'),
                                 keep_trailing_newline=True)
                 template = env.get_template('hostfile.j2')
+                response_munch_final = {}
+                # Catenate input criteria and invidivual hosts into the single list
+                response_munch_final['results'] = response_munch.results +\
+                                                response_individ_munch.results
+                # Replace 'results' value (list) in dictionary with catenated
+                # lists of search criteria and individually defined hosts
+                response_munch.update(response_munch_final)
                 output = template.render(results=response_munch.results, platforms=platforms)
 
                 # - Generate final file, if Netbox is ok, use previous file instead

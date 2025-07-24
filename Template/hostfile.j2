@@ -10,10 +10,10 @@ all:
 {%-   for result in results %}
 {%-     if result.platform.slug == platform %}
 {#-       Exclude FPR and secondary ASA #}
-{%-       if '-fpr-' not in result.name and '-sec' not in result.name %}
+{#-       if '-fpr-' not in result.name and '-sec' not in result.name #}
         {{ result.name }}:
           ansible_host: {{ result.primary_ip.address.split('/')[0] }}
-{%-       endif %}
+{#-       endif #}
 {%-     endif %}
 {%-   endfor %}
 {%- endfor %}

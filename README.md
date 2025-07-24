@@ -3,6 +3,23 @@ An application to pull data from Netbox based o provided criteria.
 
 Only os environment variables and `Var/input.yml` need to be set to reflect the real status.
 
+Provides an ansible hosts inventory file on the output, in this form:
+```
+all:
+  children:
+    fortigate_access:
+      hosts:
+        FG-FW-01:
+          ansible_host: 10.152.131.38
+        FG-FW-02:
+          ansible_host: 10.152.132.38
+    mikrotik_access:
+      hosts:
+        MIKROTIK-BRIDGE-01:
+          ansible_host: 10.52.17.50
+    ...         
+```
+
 ## Usage (Option #1)
 ```
 git clone git@127.0.0.1:itdanucem/get-netbox-devices.git

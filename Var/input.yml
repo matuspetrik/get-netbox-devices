@@ -8,6 +8,7 @@ netbox:
 
 criteria_input:
   input:
+    # logical AND through all below criteria, except 'individual_hosts'
     platform: # Has to match platforms in Netbox
       - fortigate
       - mikrotik
@@ -15,6 +16,7 @@ criteria_input:
       - ios-xe
       - ios-firmware
       - asa
+      - firepower
     status: # Has to match statuses in Netbox
       - active
       # - decommissioning
@@ -34,6 +36,10 @@ criteria_input:
       - technology
     tenant__n: # Has to match tenant in Netbox. Note, these tags will be excluded.
       - swan
+    individual_hosts: # breaks all previous filters and adds following hostnames
+      # host must belong to one of the platforms defined above otherwise
+      # it will be ignored
+      - ND-IDC-FW01
 
 output_file_path: ${OUTPUT_FILE_PATH}  # env variable, do not edit
 
