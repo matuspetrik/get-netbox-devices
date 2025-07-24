@@ -37,6 +37,8 @@ criteria_input:
     tenant__n: # Has to match tenant in Netbox. Note, these tags will be excluded.
       - swan
     individual_hosts: # breaks all previous filters and adds following hostnames
+      # host must belong to one of the platforms defined above otherwise
+      # it will be ignored
       - ND-IDC-FW01
 
 output_file_path: ${OUTPUT_FILE_PATH}  # env variable, do not edit
